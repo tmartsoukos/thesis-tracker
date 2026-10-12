@@ -2,8 +2,9 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { newId, useStore } from '../store'
 import { PAPER_STATUS } from '../labels'
-import { Select } from '../components/ui'
+import { EmptyState, Select } from '../components/ui'
 import type { PaperStatus } from '../types'
+import { Icon } from '../components/icons'
 
 export default function Papers() {
   const { data, update } = useStore()
@@ -34,7 +35,9 @@ export default function Papers() {
 
   return (
     <>
-      <h1>Papers</h1>
+      <div className="page-head">
+        <h1>Papers</h1>
+      </div>
       <form className="row" onSubmit={add}>
         <label className="grow">
           Τίτλος <input required value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -73,7 +76,7 @@ export default function Papers() {
       </div>
 
       {rows.length === 0 ? (
-        <p className="muted">Δεν υπάρχουν papers.</p>
+        <EmptyState icon="book" title="Δεν υπάρχουν papers">Προσθέστε το πρώτο από τη φόρμα πάνω.</EmptyState>
       ) : (
         <div className="table-wrap">
           <table>
@@ -127,7 +130,7 @@ export default function Papers() {
                       aria-label={`Διαγραφή: ${p.title}`}
                       onClick={() => update((d) => (d.papers = d.papers.filter((q) => q.id !== p.id)))}
                     >
-                      ✕
+                      <Icon name="trash" size={18} />
                     </button>
                   </td>
                 </tr>

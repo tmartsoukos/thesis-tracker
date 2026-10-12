@@ -4,6 +4,7 @@ import { newId, useStore } from '../store'
 import { CHAPTER_STATUS } from '../labels'
 import { NumberInput, ProgressBar, Select } from '../components/ui'
 import type { Chapter } from '../types'
+import { Icon } from '../components/icons'
 
 export default function Writing() {
   const { data, update } = useStore()
@@ -31,7 +32,9 @@ export default function Writing() {
 
   return (
     <>
-      <h1>Γραφή</h1>
+      <div className="page-head">
+        <h1>Γραφή</h1>
+      </div>
       <section className="card" aria-labelledby="h-total">
         <h2 id="h-total">Σύνολο</h2>
         <p className="big">
@@ -59,7 +62,7 @@ export default function Writing() {
                   aria-label={`Διαγραφή: ${c.title}`}
                   onClick={() => update((d) => (d.chapters = d.chapters.filter((x) => x.id !== c.id)))}
                 >
-                  ✕
+                  <Icon name="trash" size={18} />
                 </button>
               </div>
               <ProgressBar value={pct} label={`Πρόοδος: ${c.title}`} />

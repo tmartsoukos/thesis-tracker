@@ -3,6 +3,8 @@ import type { FormEvent } from 'react'
 import { newId, useStore } from '../store'
 import { formatDate, todayAthens } from '../lib/dates'
 import type { Meeting } from '../types'
+import { Icon } from '../components/icons'
+import { EmptyState } from '../components/ui'
 
 function MeetingCard({ meeting }: { meeting: Meeting }) {
   const { update } = useStore()
@@ -33,7 +35,7 @@ function MeetingCard({ meeting }: { meeting: Meeting }) {
           aria-label={`Διαγραφή συνάντησης: ${meeting.title}`}
           onClick={() => update((d) => (d.meetings = d.meetings.filter((x) => x.id !== meeting.id)))}
         >
-          ✕
+          <Icon name="trash" size={18} />
         </button>
       </div>
       <label>
@@ -63,7 +65,7 @@ function MeetingCard({ meeting }: { meeting: Meeting }) {
               aria-label={`Διαγραφή action item: ${a.text}`}
               onClick={() => edit((m) => (m.actionItems = m.actionItems.filter((i) => i.id !== a.id)))}
             >
-              ✕
+              <Icon name="trash" size={18} />
             </button>
           </li>
         ))}
@@ -97,7 +99,9 @@ export default function Meetings() {
 
   return (
     <>
-      <h1>Συναντήσεις και ημερολόγιο</h1>
+      <div className="page-head">
+        <h1>Συναντήσεις και ημερολόγιο</h1>
+      </div>
       <form className="row" onSubmit={add}>
         <label className="grow">
           Τίτλος <input required value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -112,7 +116,7 @@ export default function Meetings() {
       </form>
 
       <h2>Επερχόμενες</h2>
-      {upcoming.length === 0 && <p className="muted">Καμία.</p>}
+      {upcoming.length === 0 && <EmptyState icon="calendar" title="Καμία επερχόμενη συνάντηση" />}
       <ul className="stack">
         {upcoming.map((m) => (
           <MeetingCard key={m.id} meeting={m} />
@@ -120,7 +124,7 @@ export default function Meetings() {
       </ul>
 
       <h2>Προηγούμενες</h2>
-      {past.length === 0 && <p className="muted">Καμία.</p>}
+      {past.length === 0 && <EmptyState icon="calendar" title="Καμία προηγούμενη συνάντηση" />}
       <ul className="stack">
         {past.map((m) => (
           <MeetingCard key={m.id} meeting={m} />

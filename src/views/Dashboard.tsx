@@ -9,7 +9,7 @@ import {
   trackStatus,
 } from '../lib/progress'
 import { TRACK_LABEL } from '../labels'
-import { Badge, ProgressBar } from '../components/ui'
+import { Badge, EmptyState, ProgressRing } from '../components/ui'
 
 export default function Dashboard() {
   const { data, update } = useStore()
@@ -54,50 +54,58 @@ export default function Dashboard() {
     .slice(0, 6)
 
   const sign = diff > 0 ? '+' : ''
+  const weekEmpty = activePhases.length === 0 && weekTasks.length === 0 && weekActions.length === 0
 
   return (
     <>
-      <h1>Αρχική</h1>
-      <div className="grid">
-        <section className="card hero" aria-labelledby="h-countdown">
+      <div className="page-head">
+        <h1>Αρχική</h1>
+        <p className="muted">Σήμερα {formatDate(today)}</p>
+      </div>
+
+      <div className="hero-grid">
+        <section className="card hero-count" aria-labelledby="h-countdown">
           <h2 id="h-countdown">Αντίστροφη μέτρηση</h2>
           <p className="big">
             {left >= 0 ? left : 0}
             <span className="unit"> {left === 1 ? 'ημέρα' : 'ημέρες'}</span>
           </p>
-          <p className="muted">
+          <p>
             {left >= 0
               ? `έως την παράδοση (${formatDate(data.deadline)})`
               : `Η προθεσμία (${formatDate(data.deadline)}) έχει περάσει.`}
           </p>
         </section>
 
-        <section className="card" aria-labelledby="h-progress">
-          <h2 id="h-progress">Συνολική πρόοδος</h2>
-          <p className="big">{Math.round(actual)}%</p>
-          <ProgressBar value={actual} label="Συνολική πρόοδος" />
-          <p className="muted">
-            {done} από {total} tasks
-          </p>
-          <p>
-            <Badge kind={track}>{TRACK_LABEL[track]}</Badge>{' '}
-            <span>
+        <section className="card hero-progress" aria-labelledby="h-progress">
+          <ProgressRing value={actual} label="Συνολική πρόοδος">
+            <span className="ring-num">{Math.round(actual)}%</span>
+          </ProgressRing>
+          <div>
+            <h2 id="h-progress">Συνολική πρόοδος</h2>
+            <p>
+              <Badge kind={track}>{TRACK_LABEL[track]}</Badge>
+            </p>
+            <p className="muted">
+              {done} από {total} tasks
+            </p>
+            <p className="muted small">
               {sign}
               {diff.toFixed(1)}% σε σχέση με το αναμενόμενο ({expected.toFixed(1)}%)
-            </span>
-          </p>
+            </p>
+          </div>
         </section>
+      </div>
 
-        <section className="card wide" aria-labelledby="h-week">
+      <div className="dash-grid">
+        <section className="card dash-week" aria-labelledby="h-week">
           <h2 id="h-week">
             Αυτή την εβδομάδα{' '}
             <span className="muted small">
               {formatDate(week.start)} – {formatDate(week.end)}
             </span>
           </h2>
-          {activePhases.length === 0 && weekTasks.length === 0 && weekActions.length === 0 && (
-            <p className="muted">Τίποτα προγραμματισμένο.</p>
-          )}
+          {weekEmpty && <EmptyState icon="calendar" title="Τίποτα προγραμματισμένο" />}
           {activePhases.length > 0 && (
             <>
               <h3>Ενεργές φάσεις</h3>
@@ -173,30 +181,29 @@ export default function Dashboard() {
           <h2 id="h-meeting">Επόμενη συνάντηση</h2>
           {nextMeeting ? (
             <>
-              <p>
-                <strong>{nextMeeting.title}</strong>
-              </p>
+              <p className="strong">{nextMeeting.title}</p>
               <p className="muted">
                 {formatDate(nextMeeting.date)} · σε {diffDays(today, nextMeeting.date)} ημέρες
               </p>
               <Link to="/meetings">Όλες οι συναντήσεις</Link>
             </>
           ) : (
-            <p className="muted">Δεν υπάρχει προγραμματισμένη συνάντηση.</p>
+            <EmptyState icon="calendar" title="Καμία προγραμματισμένη συνάντηση" />
           )}
         </section>
 
         <section className="card" aria-labelledby="h-deadlines">
           <h2 id="h-deadlines">Επερχόμενες προθεσμίες</h2>
           {deadlines.length === 0 ? (
-            <p className="muted">Καμία.</p>
+            <EmptyState icon="calendar" title="Καμία προθεσμία" />
           ) : (
-            <ul className="list">
+            <ul className="list deadlines">
               {deadlines.map((d) => (
                 <li key={d.key}>
-                  <span className="date">{formatDate(d.date)}</span>{' '}
+                  <span className={d.date <= addDays(today, 7) ? 'date-chip soon' : 'date-chip'}>
+                    {formatDate(d.date)}
+                  </span>
                   <Link to={d.to}>{d.text}</Link>
-                  {d.date <= addDays(today, 7) && <span className="muted small"> (σύντομα)</span>}
                 </li>
               ))}
             </ul>

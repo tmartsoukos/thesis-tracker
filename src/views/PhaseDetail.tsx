@@ -5,8 +5,9 @@ import { newId, useStore } from '../store'
 import { formatDate } from '../lib/dates'
 import { phaseProgress } from '../lib/progress'
 import { PHASE_STATUS } from '../labels'
-import { ProgressBar, Select } from '../components/ui'
+import { EmptyState, ProgressBar, Select } from '../components/ui'
 import type { Phase, Task } from '../types'
+import { Icon } from '../components/icons'
 
 export default function PhaseDetail() {
   const { id } = useParams()
@@ -54,33 +55,37 @@ export default function PhaseDetail() {
 
   return (
     <>
-      <p>
-        <Link to="/timeline">← Χρονοδιάγραμμα</Link>
-      </p>
-      <h1>{phase.title}</h1>
-      <p className="muted">
-        {formatDate(phase.startDate)} – {formatDate(phase.endDate)}
-      </p>
-
-      <div className="row">
-        <label>
-          Κατάσταση{' '}
-          <Select
-            label="Κατάσταση φάσης"
-            value={phase.status}
-            options={PHASE_STATUS}
-            onChange={(v) => edit((p) => (p.status = v))}
-          />
-        </label>
+      <Link to="/timeline" className="back">
+        ← Χρονοδιάγραμμα
+      </Link>
+      <div className="page-head">
+        <h1>{phase.title}</h1>
+        <p className="muted">
+          {formatDate(phase.startDate)} – {formatDate(phase.endDate)}
+        </p>
       </div>
-      <ProgressBar value={progress} label="Πρόοδος φάσης" />
-      <p className="muted">
-        {phase.tasks.filter((t) => t.done).length} από {phase.tasks.length} tasks (
-        {Math.round(progress)}%)
-      </p>
+
+      <section className="card" aria-label="Κατάσταση και πρόοδος">
+        <div className="row">
+          <label>
+            Κατάσταση{' '}
+            <Select
+              label="Κατάσταση φάσης"
+              value={phase.status}
+              options={PHASE_STATUS}
+              onChange={(v) => edit((p) => (p.status = v))}
+            />
+          </label>
+        </div>
+        <ProgressBar value={progress} label="Πρόοδος φάσης" />
+        <p className="muted">
+          {phase.tasks.filter((t) => t.done).length} από {phase.tasks.length} tasks (
+          {Math.round(progress)}%)
+        </p>
+      </section>
 
       <h2>Tasks</h2>
-      {phase.tasks.length === 0 && <p className="muted">Δεν υπάρχουν tasks.</p>}
+      {phase.tasks.length === 0 && <EmptyState icon="inbox" title="Δεν υπάρχουν tasks" />}
       <ul className="tasks">
         {phase.tasks.map((t, i) => (
           <li key={t.id} className="task">
@@ -106,7 +111,7 @@ export default function PhaseDetail() {
               )}
               <span className="btn-group">
                 <button type="button" aria-label={`Επάνω: ${t.title}`} disabled={i === 0} onClick={() => move(i, -1)}>
-                  ↑
+                  <Icon name="up" size={18} />
                 </button>
                 <button
                   type="button"
@@ -114,10 +119,10 @@ export default function PhaseDetail() {
                   disabled={i === phase.tasks.length - 1}
                   onClick={() => move(i, 1)}
                 >
-                  ↓
+                  <Icon name="down" size={18} />
                 </button>
                 <button type="button" aria-label={`Επεξεργασία: ${t.title}`} onClick={() => setEditing(t.id)}>
-                  ✎
+                  <Icon name="edit" size={18} />
                 </button>
                 <button
                   type="button"
@@ -125,7 +130,7 @@ export default function PhaseDetail() {
                   aria-label={`Διαγραφή: ${t.title}`}
                   onClick={() => edit((p) => (p.tasks = p.tasks.filter((x) => x.id !== t.id)))}
                 >
-                  ✕
+                  <Icon name="trash" size={18} />
                 </button>
               </span>
             </div>

@@ -32,8 +32,10 @@ export default function Timeline() {
 
   return (
     <>
-      <h1>Χρονοδιάγραμμα</h1>
-      <p className="muted">Επιλέξτε μια φάση για λεπτομέρειες.</p>
+      <div className="page-head">
+        <h1>Χρονοδιάγραμμα</h1>
+        <p className="muted">Επιλέξτε μια φάση για λεπτομέρειες.</p>
+      </div>
       <div className="gantt-scroll">
         <div className="gantt">
           <div className="gantt-axis" aria-hidden="true">
@@ -75,6 +77,13 @@ export default function Timeline() {
                   >
                     <span className="gantt-bar-fill" style={{ width: `${phaseProgress(p)}%` }} />
                   </button>
+                  <span className="gantt-tip" role="presentation" style={{ left: `${Math.min(left, 70)}%` }}>
+                    <strong>{p.title}</strong>
+                    <br />
+                    {formatDate(p.startDate)} – {formatDate(p.endDate)}
+                    <br />
+                    {PHASE_STATUS[p.status]} · {Math.round(phaseProgress(p))}%
+                  </span>
                   <span
                     className="gantt-label"
                     style={left > 60 ? { right: `${100 - left}%` } : { left: `${left + width}%` }}

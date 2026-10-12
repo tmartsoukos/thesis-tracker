@@ -2,8 +2,9 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { newId, useStore } from '../store'
 import { RISK_STATUS } from '../labels'
-import { Select } from '../components/ui'
+import { EmptyState, Select } from '../components/ui'
 import type { Risk } from '../types'
+import { Icon } from '../components/icons'
 
 export default function Risks() {
   const { data, update } = useStore()
@@ -28,7 +29,9 @@ export default function Risks() {
 
   return (
     <>
-      <h1>Ρίσκα</h1>
+      <div className="page-head">
+        <h1>Ρίσκα</h1>
+      </div>
       <form className="row" onSubmit={add}>
         <label className="grow">
           Ρίσκο <input required value={text} onChange={(e) => setText(e.target.value)} />
@@ -42,7 +45,7 @@ export default function Risks() {
       </form>
 
       {data.risks.length === 0 ? (
-        <p className="muted">Δεν έχουν καταγραφεί ρίσκα.</p>
+        <EmptyState icon="shield" title="Δεν έχουν καταγραφεί ρίσκα">Καταγράψτε ένα ρίσκο και πώς θα το αντιμετωπίσετε.</EmptyState>
       ) : (
         <ul className="stack">
           {data.risks.map((r) => (
@@ -64,7 +67,7 @@ export default function Risks() {
                   aria-label={`Διαγραφή: ${r.text}`}
                   onClick={() => update((d) => (d.risks = d.risks.filter((x) => x.id !== r.id)))}
                 >
-                  ✕
+                  <Icon name="trash" size={18} />
                 </button>
               </div>
               <label>

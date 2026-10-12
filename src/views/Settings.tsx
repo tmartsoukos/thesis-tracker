@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { parseAppData, useStore } from '../store'
 import type { Theme } from '../store'
+import { Icon } from '../components/icons'
 import { formatDate, isValidYmd, todayAthens } from '../lib/dates'
 
 export default function Settings() {
@@ -44,7 +45,9 @@ export default function Settings() {
 
   return (
     <>
-      <h1>Ρυθμίσεις</h1>
+      <div className="page-head">
+        <h1>Ρυθμίσεις</h1>
+      </div>
 
       <section className="card" aria-labelledby="h-deadline">
         <h2 id="h-deadline">Τελική προθεσμία</h2>
@@ -129,9 +132,11 @@ export default function Settings() {
         <p className="muted">Τα δεδομένα αποθηκεύονται μόνο σε αυτόν τον browser. Κάντε τακτικά export.</p>
         <div className="row">
           <button type="button" className="primary" onClick={exportJson}>
+            <Icon name="download" size={18} />
             Export JSON
           </button>
           <label className="file">
+            <Icon name="upload" size={18} />
             Import JSON
             <input
               ref={fileRef}

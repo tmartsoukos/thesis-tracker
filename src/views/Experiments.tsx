@@ -2,6 +2,8 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { newId, useStore } from '../store'
 import { formatDate, todayAthens } from '../lib/dates'
+import { Icon } from '../components/icons'
+import { EmptyState } from '../components/ui'
 
 const isMacroF1 = (metric: string) => metric.trim().toLowerCase().replace(/[\s_]/g, '-') === 'macro-f1'
 
@@ -45,12 +47,14 @@ export default function Experiments() {
 
   return (
     <>
-      <h1>Πειράματα</h1>
+      <div className="page-head">
+        <h1>Πειράματα</h1>
+      </div>
 
       <section aria-labelledby="h-chart">
         <h2 id="h-chart">Macro-F1 ανά μοντέλο</h2>
         {bars.length === 0 ? (
-          <p className="muted">Προσθέστε αποτελέσματα με μετρική «Macro-F1» για να εμφανιστεί γράφημα.</p>
+          <EmptyState icon="flask" title="Δεν υπάρχει γράφημα ακόμα">Προσθέστε αποτελέσματα με μετρική «Macro-F1».</EmptyState>
         ) : (
           <ul className="chart" aria-label="Γράφημα Macro-F1 ανά μοντέλο">
             {bars.map(([model, v]) => (
@@ -100,7 +104,7 @@ export default function Experiments() {
       </form>
 
       {data.experiments.length === 0 ? (
-        <p className="muted">Δεν υπάρχουν αποτελέσματα.</p>
+        <EmptyState icon="flask" title="Δεν υπάρχουν αποτελέσματα">Προσθέστε το πρώτο πείραμα από τη φόρμα.</EmptyState>
       ) : (
         <div className="table-wrap">
           <table>
@@ -133,7 +137,7 @@ export default function Experiments() {
                       aria-label={`Διαγραφή: ${x.name}`}
                       onClick={() => update((d) => (d.experiments = d.experiments.filter((q) => q.id !== x.id)))}
                     >
-                      ✕
+                      <Icon name="trash" size={18} />
                     </button>
                   </td>
                 </tr>
